@@ -34,5 +34,13 @@ ADD https://github.com/shopware/platform/archive/refs/tags/v6.4.7.0.tar.gz shopw
 COPY config/install_shopware6.sh install_shopware6.sh
 COPY config/php.ini /usr/local/etc/php/
 
-RUN chmod +x install_shopware6.sh
+RUN if [ -x "$(command -v apache2-foreground)" ]; then a2enmod rewrite headers; fi
 
+RUN chmod +x install_shopware6.sh
+RUN ./install_shopware6.sh
+
+# TODO:
+# - change ownership of private.pem and public.pem files to www-data group
+# - include ./psh.phar in the installation script
+# - include the trusted proxys in the .env file
+# - correct the .psh.yaml.override file, otherwise write a query that will change the value of the url column of the sales_channel_domain table 
