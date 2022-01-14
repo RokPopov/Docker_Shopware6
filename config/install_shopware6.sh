@@ -5,13 +5,13 @@ rm shopware6_development.tar.gz
 tar -xf shopware6_platform.tar.gz --strip-components 1 -C platform
 
 echo "const:
-  APP_ENV: \"dev\"
-  APP_URL: \"http://174.138.13.2:8080\"
-  DB_HOST: \"mariadb\"
+  APP_ENV: \"$APP_ENV\"
+  APP_URL: \"http://$SHOPWARE_HOST\"
+  DB_HOST: \"$DB_HOST\"
   DB_PORT: \"3306\"
-  DB_NAME: \"shopware6\"
-  DB_USER: \"root\"
-  DB_PASSWORD: \"shopware6\"" >> .psh.yaml.override
+  DB_NAME: \"$DB_NAME\"
+  DB_USER: \"$DB_USER\"
+  DB_PASSWORD: \"$DB_PASSWORD\"" >> .psh.yaml.override
 
 if [[ -e /usr/local/bin/composer ]]; then
         echo "Composer already exists"
@@ -22,3 +22,31 @@ else
         mv composer.phar /usr/local/bin/composer
 fi
 
+./psh.phar install
+
+chown www-data:www-data config/jwt/public.pem
+chown www-data:www-data config/jwt/private.pem
+
+sed -i "s/TRUSTED_PROXIES=.*/TRUSTED_PROXIES=127.0.0.1, 127.0.0.2, ::1/g" .env
+
+echo "<VirtualHost *:80>
+   ServerName $SHOPWARE_HOST
+   DocumentRoot /var/www/html/public
+
+   <Directory /var/www/html>
+      Options Indexes FollowSymLinks MultiViews
+      AllowOverride All
+      Order allow,deny
+      allow from all
+      Require all granted
+   </Directory>
+
+   ErrorLog ${APACHE_LOG_DIR}/shopware-platform.error.log
+   CustomLog ${APACHE_LOG_DIR}/shopware-platform.access.log combined
+   LogLevel debug
+</VirtualHost>" >> /etc/apache2/sites-available/shopware6_apache.conf
+
+a2ensite shopware6_apache.conf
+a2dissite 000-default.conf
+
+exec apache2-foreground

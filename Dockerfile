@@ -2,15 +2,14 @@ FROM php:7.4-apache
 LABEL maintainer="Rok Popov Ledinski <me@rpl.com>"
 
 ENV TZ=Europe/Amsterdam \
-SHOPWARE_HOST="<will be defined>" \
-DB_USER=shopware6 \
+SHOPWARE_HOST=174.138.13.2:8080 \
+DB_USER=root \
 DB_PASSWORD=shopware6 \
-DB_HOST="<will be defined>" \
-DB_NAME=shopware \
-APP_URL=http://localhost:8000 \
-APP_EN=dev \
-SW_LANGUAGE=en_US \
-SW_CURRENCY=EUR 
+DB_HOST=mariadb \
+DB_NAME=shopware6 \
+APP_ENV=dev \
+SW_LANGUAGE=en_US \ 
+SW_CURRENCY=EUR
 
 RUN apt-get update \
 	&& apt-get install -y \
@@ -37,10 +36,5 @@ COPY config/php.ini /usr/local/etc/php/
 RUN if [ -x "$(command -v apache2-foreground)" ]; then a2enmod rewrite headers; fi
 
 RUN chmod +x install_shopware6.sh
-RUN ./install_shopware6.sh
+CMD ["bash", "install_shopware6.sh"] 
 
-# TODO:
-# - change ownership of private.pem and public.pem files to www-data group
-# - include ./psh.phar in the installation script
-# - include the trusted proxys in the .env file
-# - correct the .psh.yaml.override file, otherwise write a query that will change the value of the url column of the sales_channel_domain table 
