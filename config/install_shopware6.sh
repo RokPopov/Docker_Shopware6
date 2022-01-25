@@ -7,14 +7,22 @@ else tar -xf shopware6_development.tar.gz --strip-components 1
 fi
 
 if [ $USE_SSL -eq 1 ]; then
-	PROTOCOL="https"
-	echo "<IfModule mod_setenvif.c>
+	PROTOCOL="https" 
+	grep -q "SetEnvIf X-Forwarded-Proto \"^https$\" HTTPS" "/etc/apache2/apache2.conf"
+	IFEXISTS=$?
+
+	if [[ $IFEXISTS -eq 0 ]]; then
+		echo "HTTPS config already exists in /etc/apache2/apache2.conf"
+	else
+		echo "<IfModule mod_setenvif.c>
 		SetEnvIf X-Forwarded-Proto \"^https$\" HTTPS
 		</IfModule>" >> /etc/apache2/apache2.conf
-else 
+		echo "HTTPS config is added"
+	fi
+else
 	PROTOCOL="http"
-fi	
- 
+fi
+
 echo "const:
   APP_ENV: \"$APP_ENV\"
   APP_URL: \"$PROTOCOL://$SHOPWARE_HOST\"
