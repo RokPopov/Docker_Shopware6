@@ -2,7 +2,8 @@ FROM php:7.4-apache
 LABEL maintainer="Rok Popov Ledinski <me@rpl.com>"
 
 ENV TZ=Europe/Amsterdam \
-SHOPWARE_HOST=174.138.13.2:8080 \
+USE_SSL=0 \
+SHOPWARE_HOST="will_be_replaced" \
 DB_USER=root \
 DB_PASSWORD=shopware6 \
 DB_HOST=mariadb \

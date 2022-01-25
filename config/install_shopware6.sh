@@ -6,10 +6,16 @@ else tar -xf shopware6_development.tar.gz --strip-components 1
      rm shopware6_platform.tar.gz
 fi
 
-
+if [ $USE_SSL -eq 1 ]; then
+	PROTOCOL="https"
+#TODO append file to apache configuration with linux command and gracefully restart apache	
+else 
+	PROTOCOL="http"
+fi	
+ 
 echo "const:
   APP_ENV: \"$APP_ENV\"
-  APP_URL: \"http://$SHOPWARE_HOST\"
+  APP_URL: \"$PROTOCOL://$SHOPWARE_HOST\"
   DB_HOST: \"$DB_HOST\"
   DB_PORT: \"3306\"
   DB_NAME: \"$DB_NAME\"
@@ -33,7 +39,7 @@ else
 	chown www-data:www-data config/jwt/private.pem
 fi
 
-sed -i "s/TRUSTED_PROXIES=.*/TRUSTED_PROXIES=127.0.0.1, 127.0.0.2, ::1/g" .env
+sed -i "s/#TRUSTED_PROXIES=.*/TRUSTED_PROXIES=127.0.0.1, 127.0.0.2, ::1/g" .env
 IS_COMMAND_SUCCESS=$?
 
 if [[ $IS_COMMAND_SUCCESS -ne 0 ]]; then
