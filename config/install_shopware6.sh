@@ -8,7 +8,9 @@ fi
 
 if [ $USE_SSL -eq 1 ]; then
 	PROTOCOL="https"
-#TODO append file to apache configuration with linux command and gracefully restart apache	
+	echo "<IfModule mod_setenvif.c>
+		SetEnvIf X-Forwarded-Proto \"^https$\" HTTPS
+		</IfModule>"
 else 
 	PROTOCOL="http"
 fi	
