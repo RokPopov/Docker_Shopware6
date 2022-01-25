@@ -10,7 +10,7 @@ if [ $USE_SSL -eq 1 ]; then
 	PROTOCOL="https"
 	echo "<IfModule mod_setenvif.c>
 		SetEnvIf X-Forwarded-Proto \"^https$\" HTTPS
-		</IfModule>"
+		</IfModule>" >> /etc/apache2/apache2.conf
 else 
 	PROTOCOL="http"
 fi	
@@ -41,16 +41,7 @@ else
 	chown www-data:www-data config/jwt/private.pem
 fi
 
-sed -i "s/#TRUSTED_PROXIES=.*/TRUSTED_PROXIES=127.0.0.1, 127.0.0.2, ::1/g" .env
-IS_COMMAND_SUCCESS=$?
-
-if [[ $IS_COMMAND_SUCCESS -ne 0 ]]; then
-	echo "Failed to change trusted proxy."
-else 
-	echo "Successfully changed trusted proxy."
-fi
-
-if [[-e /etc/apache2/sites-available/shopware6_apache.conf ]]; then
+if [[ -e /etc/apache2/sites-available/shopware6_apache.conf ]]; then
 	a2ensite shopware6_apache.conf
 	a2dissite 000-default.conf
 else 
