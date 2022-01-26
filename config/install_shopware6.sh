@@ -24,13 +24,14 @@ else
 fi
 
 echo "const:
-  APP_ENV: \"$APP_ENV\"
   APP_URL: \"$PROTOCOL://$SHOPWARE_HOST\"
-  DB_HOST: \"$DB_HOST\"
-  DB_PORT: \"3306\"
-  DB_NAME: \"$DB_NAME\"
   DB_USER: \"$DB_USER\"
-  DB_PASSWORD: \"$DB_PASSWORD\"" >> .psh.yaml.override
+  DB_PASSWORD: \"$DB_PASSWORD\"
+  DB_HOST: \"$DB_HOST\"
+  DB_NAME: \"$DB_NAME\"
+  DB_PORT: \"$DB_PORT\"
+  APP_ENV: \"$APP_ENV\"" >> .psh.yaml.override
+
 
 if [[ -e /usr/local/bin/composer ]]; then
         echo "Composer already exists."
@@ -45,8 +46,7 @@ if [[ -d /var/www/html/vendor/shopware ]]; then
 	echo "Shopware6 already installed."
 else 
 	./psh.phar install
-	chown www-data:www-data config/jwt/public.pem
-	chown www-data:www-data config/jwt/private.pem
+	chown www-data:www-data -R .
 fi
 
 if [[ -e /etc/apache2/sites-available/shopware6_apache.conf ]]; then

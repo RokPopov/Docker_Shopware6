@@ -1,16 +1,14 @@
 FROM php:7.4-apache
-LABEL maintainer="Rok Popov Ledinski <me@rpl.com>"
+LABEL maintainer="Rok Popov Ledinski <rok.popov.ledinski90@gmail.com>"
 
-ENV TZ=Europe/Amsterdam \
-USE_SSL=0 \
+ENV USE_SSL=0 \
 SHOPWARE_HOST="will_be_replaced" \
 DB_USER=root \
 DB_PASSWORD=shopware6 \
 DB_HOST=mariadb \
 DB_NAME=shopware6 \
-APP_ENV=dev \
-SW_LANGUAGE=en_US \ 
-SW_CURRENCY=EUR
+DB_PORT=3306 \
+APP_ENV=dev 
 
 RUN apt-get update \
 	&& apt-get install -y \
