@@ -71,4 +71,27 @@ else
 	a2dissite 000-default.conf
 fi
 
+if [[ -e /var/www/html/config/packages/shopware.yaml ]]; then
+	echo "Admin queue worker already exists"
+else 
+	mkdir /var/www/html/config/packages
+	echo "shopware:
+    admin_worker:
+        enable_admin_worker: false" >> /var/www/html/config/packages/shopware.yaml
+	php bin/console cache:clear
+	echo "The admin queue worker config file is now created"
+fi
+
+if [[ -e /etc/cron.d/shopware6_cron ]]; then
+	echo "Cron already exists"
+else 
+	echo "* * * * * /usr/local/bin/php /var/www/html/bin/console messenger:consume --time-limit=60 --memory-limit=512M
+* * * * * /usr/local/bin/php /var/www/html/bin/console scheduled-task:run --time-limit=60 --memory-limit=512M" >> /etc/cron.d/shopware6_cron
+	chmod 644 /etc/cron.d/shopware6_cron
+	crontab /etc/cron.d/shopware6_cron
+	echo "Cron jobs are now created"
+fi
+
+/etc/init.d/cron start
+
 exec apache2-foreground

@@ -21,7 +21,8 @@ RUN apt-get update \
 	unzip \
 	wget \
 	nodejs \
-	npm 
+	npm \
+	cron 
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg 
 RUN docker-php-ext-install -j$(nproc) gd intl pdo_mysql zip
