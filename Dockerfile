@@ -27,14 +27,14 @@ RUN apt-get update \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg 
 RUN docker-php-ext-install -j$(nproc) gd intl pdo_mysql zip
 
-ADD https://github.com/shopware/development/archive/refs/tags/v6.4.7.0.tar.gz shopware6_development.tar.gz
-ADD https://github.com/shopware/platform/archive/refs/tags/v6.4.7.0.tar.gz shopware6_platform.tar.gz
+ADD https://github.com/shopware/development/archive/refs/tags/v6.4.7.0.tar.gz /tmp/shopware6_development.tar.gz
+ADD https://github.com/shopware/platform/archive/refs/tags/v6.4.7.0.tar.gz /tmp/shopware6_platform.tar.gz
 
-COPY config/install_shopware6.sh install_shopware6.sh
+COPY config/install_shopware6.sh /tmp/install_shopware6.sh
 COPY config/php.ini /usr/local/etc/php/
 
 RUN if [ -x "$(command -v apache2-foreground)" ]; then a2enmod rewrite headers; fi
 
-RUN chmod +x install_shopware6.sh
-CMD ["bash", "install_shopware6.sh"] 
+RUN chmod +x /tmp/install_shopware6.sh
+CMD ["bash", "/tmp/install_shopware6.sh"] 
 

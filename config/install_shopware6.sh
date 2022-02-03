@@ -1,4 +1,16 @@
-if [[ -e ./public/index.php  ]]; then
+if [[ -e /tmp/shopware6_development.tar.gz  ]]; then
+	mv /tmp/shopware6_development.tar.gz /var/www/html
+else 
+	echo "Shopware6 development is already moved to /var/www/html"
+fi
+
+if [[ -e /tmp/shopware6_platform.tar.gz  ]]; then
+        mv /tmp/shopware6_platform.tar.gz /var/www/html
+else
+        echo "Shopware6 platform is already moved to /var/www/html"
+fi
+
+if [[ -e /var/www/html/public/index.php  ]]; then
 	echo "Shopware6 already extracted."
 else tar -xf shopware6_development.tar.gz --strip-components 1
      rm shopware6_development.tar.gz
