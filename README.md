@@ -3,20 +3,20 @@
 This image is based on the latest Apache version in the [official PHP image](https://registry.hub.docker.com/_/php/) and requires MySQL or MARIADB images. Requirements for database versions will differ depending on the Shopware6 base version. The image is build to work with a reverse proxy instead of binding the HTTP ports directly. You can find the running steps outlisted bellow or use the ```docker-composer``` file instead.
 
 ```
-# Create a network for Reverse Proxy, DBand Magento 2.
+# Create a network for Reverse Proxy, DB and Shopware6.
 $ docker network create backend
 # Run MariaDB/MySQL database image
-$ docker run -d —name mariadb —net backend -e  MARIADB_ROOT_PASSWORD=shopware6 mariadb:10.4
+$ docker run -d —name mariadb —net backend -e MARIADB_ROOT_PASSWORD=shopware6 mariadb:10.4
 # Run Reverse Proxy image (if needed)
 $ docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro nginxproxy/nginx-proxy
 # Run Shopware6 base image
-$ docker run -d --name sw6 -e USE_SSL=1 -e LETSENCRYPT_HOST=subdomain.yourdomain.tld -e LETSENCRYPT_EMAIL=mail@yourdomain.tld  --net backend -e VIRTUAL_HOST=subdomain.yourdomain.tld -e SHOPWARE_HOST=subdomain.yourdomain.tld shopware6
+$ docker run -d --name sw6 --net backend -e VIRTUAL_HOST=subdomain.yourdomain.tld -e SHOPWARE_HOST=subdomain.yourdomain.tld rokpopovledinski/shopware6:v6.4.7.0
 ```
-# !! TODO Running with SSL
+# Running with SSL
 
 Create a network then run database as before
 ```
-# Create a network for Reverse Proxy, DB and Magento 2.
+# Create a network for Reverse Proxy, DB and Shopware6.
 $ docker network create backend
 # Run MariaDB/MySQL database image
 $ docker run -d --net backend --name mariadb -e MARIADB_USER=shopware6 -e MARIADB_PASSWORD=shopware6 -e MARIADB_ROOT_PASSWORD=shopware6 -e MARIADB_DATABASE=shopware6 mariadb:10.4
@@ -41,4 +41,9 @@ docker run -d --name nginx-proxy-acme -e DEFAULT_EMAIL=mail@yourdomain.tld \
     nginxproxy/acme-companion
 ```
 
-# Environmental variables
+Run the image with SSL settings
+```
+docker run -d --name sw6 -e USE_SSL=1 -e LETSENCRYPT_HOST=subdomain.yourdomain.tld -e LETSENCRYPT_EMAIL=mail@yourdomain.tld  --net backend -e VIRTUAL_HOST=subdomain.yourdomain.tld -e SHOPWARE_HOST=subdomain.yourdomain.tld rokpopovledinski/shopware6:v6.4.7.0
+```
+
+# !!TODO Environmental variables
